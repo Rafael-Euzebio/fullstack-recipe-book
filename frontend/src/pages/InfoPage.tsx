@@ -1,28 +1,38 @@
-import React from 'react'
+import React, { type Dispatch, type SetStateAction } from 'react'
 import { useParams } from "react-router"
 import { useFetchMeals } from '../hooks/useFetch'
 import filterIngredients from '../helpers/filterIngredients'
 import type { Meal } from '../types/meals'
+import type { Filter } from '../types/filter'
+import { MealLink } from '../components/MealLink'
 
-const IngredentsSection = ({ meal }: { meal: Meal }) => {
+const IngredentsSection = ({ meal, setFilter }: { meal: Meal, setFilter: Dispatch<SetStateAction<Filter>> }) => {
   const ingredients = filterIngredients(meal)
+
   return (
     <ul className="flex flex-wrap justify-center gap-2">
       {ingredients.map((ingredient) => (
         <li
           key={ingredient}
-          className="bg-amber-100 text-amber-900 px-3 py-1 rounded-full"
+          className="bg-amber-100 text-amber-900 px-3 py-1 rounded-full hover:bg-amber-200"
         >
-          {ingredient}
+          <MealLink
+            href="/"
+            filter={{ type: 'ingredient', value: ingredient }}
+            setFilter={setFilter}
+            className="inline-block rounded-full px-3 py-1 text-sm"
+          >
+            {ingredient}
+          </MealLink>
         </li>
       ))}
     </ul>
   )
 }
 
-const CategorySidebar = ({ category }: { category: string }) => {
+const CategorySidebar = ({ category, setFilter }: { category: string, setFilter: Dispatch<SetStateAction<Filter>> }) => {
   const { response, error } = useFetchMeals({
-    filter: 'category',
+    type: 'category',
     value: category,
   })
   const meals = response && !error ? response.meals : []
@@ -34,17 +44,24 @@ const CategorySidebar = ({ category }: { category: string }) => {
           key={meal.idMeal}
           className="text-amber-700 hover:text-amber-900 transition"
         >
-          {meal.strMeal}
+          <MealLink
+            href="/"
+            filter={{ type: 'category', value: category }}
+            setFilter={setFilter}
+            className=""
+          >
+            {meal.strMeal}
+          </MealLink>
         </li>
       ))}
     </ul>
   )
 }
 
-export const InfoPage = () => {
+export const InfoPage = ({ setFilter }: { setFilter: Dispatch<SetStateAction<Filter>> }) => {
   const params = useParams()
-  const id = params.id
-  const { response, error } = useFetchMeals({ filter: 'id', value: id })
+  const id = params.id ? params.id : ''
+  const { response, error } = useFetchMeals({ type: 'id', value: id })
   const meal = response && !error ? response.meals[0] : null
 
   if (!meal) return <></>
@@ -65,9 +82,30 @@ export const InfoPage = () => {
           {strMeal}
         </h1>
 
-        <p className="text-center font-bold text-amber-600">
+        <MealLink
+          href="/"
+          filter={{ type: 'country', value: strArea }}
+          setFilter={setFilter}
+          className="
+            block
+            w-full
+            rounded-lg
+            bg-amber-100
+            px-4
+            py-3
+            text-center
+            font-medium
+            text-amber-900
+            shadow-sm
+            transition
+            hover:bg-amber-200
+            focus:outline-none
+            focus:ring-2
+            focus:ring-amber-500
+          "
+        >
           {strArea}
-        </p>
+        </MealLink>
 
         <div className="flex justify-center">
           <img
@@ -88,7 +126,7 @@ export const InfoPage = () => {
           <h3 className="text-2xl font-serif text-amber-800">
             Ingredients
           </h3>
-          <IngredentsSection meal={meal} />
+          <IngredentsSection meal={meal} setFilter={setFilter} />
         </div>
       </div>
 
@@ -96,8 +134,8 @@ export const InfoPage = () => {
         <h4 className="text-2xl font-serif text-amber-800 mb-4 self-center">
           Similar Meals
         </h4>
-        <CategorySidebar category={strCategory} />
+        <CategorySidebar category={strCategory} setFilter={setFilter} />
       </aside>
-    </div>
+    </div >
   )
 }

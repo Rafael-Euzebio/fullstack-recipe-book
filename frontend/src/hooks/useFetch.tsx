@@ -2,13 +2,9 @@ import { useState, useEffect } from 'react'
 import axios, { AxiosError } from 'axios'
 import { mealsInstance, routes } from '../api/axiosInstance'
 import { type ApiResponse } from '../types/meals'
+import type { Filter } from '../types/filter'
 
-interface IuseFetchMeals {
-  filter?: 'id' | 'ingredient' | 'category' | 'country' | null
-  value?: string | null
-}
-
-export function useFetchMeals({ filter, value }: IuseFetchMeals) {
+export function useFetchMeals(filter: Filter) {
   const [response, setResponse] = useState<ApiResponse | null>(null)
   const [error, setError] = useState<AxiosError | Error | null>(null)
 
@@ -17,7 +13,7 @@ export function useFetchMeals({ filter, value }: IuseFetchMeals) {
       setError(null)
 
       try {
-        const response = await mealsInstance.get(filter ? `${routes[filter]}${value}` : '')
+        const response = await mealsInstance.get(filter.type ? `${routes[filter.type]}${filter.value}` : '')
         setResponse(response.data)
       } catch (err: unknown) {
 
@@ -32,7 +28,8 @@ export function useFetchMeals({ filter, value }: IuseFetchMeals) {
     }
 
     fetchData()
-  }, [filter])
+  }, [])
+
 
   return { response, error }
 }

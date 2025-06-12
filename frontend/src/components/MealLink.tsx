@@ -1,14 +1,35 @@
 import React from 'react'
-import { Link } from "react-router"
+import { Link, type LinkProps } from 'react-router'
+import type { Dispatch, SetStateAction, ReactNode } from 'react'
+import type { Filter } from '../types/filter'
 
-interface IMealLink {
+interface IMealLink extends Omit<LinkProps, 'to'> {
   href: string
-  children: string
+  children: ReactNode
+  filter?: Filter
+  setFilter?: Dispatch<SetStateAction<Filter>>
 }
 
-export const MealLink = ({ href, children }: IMealLink) => {
+export const MealLink = ({
+  href,
+  children,
+  filter,
+  setFilter,
+  ...linkProps
+}: IMealLink) => {
+  const handleClick = () => {
+    if (filter && setFilter) {
+      setFilter(filter)
+    }
+  }
+
   return (
-    <Link to={href} className="block text-center font-bold bg-amber-100 rounded-lg p-4 h-full text-lg font-sans text-amber-900 transition transform hover:-translate-y-1 hover:bg-amber-200 hover:text-amber-700">
+    <Link
+      to={href}
+      onClick={handleClick}
+      className="text-center"
+      {...linkProps}
+    >
       {children}
     </Link>
   )
