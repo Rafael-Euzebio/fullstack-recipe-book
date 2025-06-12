@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react'
 import axios, { AxiosError } from 'axios'
-import mealsInstance from '../api/axiosInstance'
+import { mealsInstance, routes } from '../api/axiosInstance'
 import { type ApiResponse } from '../types/meals'
 
 interface IuseFetchMeals {
-  id?: string | null
-  filter?: string | null
+  filter?: 'id' | 'ingredient' | 'category' | 'country' | null
+  value?: string | null
 }
-export function useFetchMeals({ id, filter }: IuseFetchMeals) {
+
+export function useFetchMeals({ filter, value }: IuseFetchMeals) {
   const [response, setResponse] = useState<ApiResponse | null>(null)
   const [error, setError] = useState<AxiosError | Error | null>(null)
-  const search = filter ? filter : ''
 
   useEffect(() => {
     async function fetchData() {
       setError(null)
 
       try {
-        const response = await mealsInstance.get(id ? `/info?id=${id}` : search)
+        const response = await mealsInstance.get(filter ? `${routes[filter]}${value}` : '')
         setResponse(response.data)
       } catch (err: unknown) {
 

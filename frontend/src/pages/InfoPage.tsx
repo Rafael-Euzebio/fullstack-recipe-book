@@ -17,7 +17,7 @@ const IngredentsSection = ({ meal }: { meal: Meal }) => {
 }
 
 const CategorySidebar = ({ category }: { category: string }) => {
-  const { response, error } = useFetchMeals({ filter: `?c=${category}` })
+  const { response, error } = useFetchMeals({ filter: 'category', value: category })
 
   const meals = response && !error ? response.meals : null
 
@@ -39,7 +39,7 @@ export const InfoPage = () => {
 
   const params = useParams()
   const id = params.id
-  const { response, error } = useFetchMeals({ id })
+  const { response, error } = useFetchMeals({ filter: 'id', value: id })
   const meal = response && !error ? response.meals[0] : null
   if (meal) {
     const { strMeal, strArea, strInstructions, strCategory, strMealThumb } = meal
