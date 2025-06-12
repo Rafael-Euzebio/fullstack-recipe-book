@@ -11,7 +11,9 @@ npm run dev
 ```
 
 ### Backend
-The backend runs on port 8080
+The backend runs on port 8080. Make sure no other script is running on it. If it's not possibble to run on port 8080, modify: 
+- `VITE_BACKEND_URL` under `./frontend/.env` 
+- `PORT` under `./backend/.env` 
 
 ```
 cd backend
