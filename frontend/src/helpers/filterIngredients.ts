@@ -5,12 +5,14 @@ export default function filterIngredients(meal: Meal): string[] {
 
   for (let i = 1; i <= 20; i++) {
     const key = `strIngredient${i}` as keyof Meal
-    const value = meal[key]?.trim()
+    const raw = meal[key]
+    const value = typeof raw === 'string' ? raw.trim() : ''
 
-    if (value) {
+    if (value && !ingredients.includes(value)) {
       ingredients.push(value)
     }
   }
 
   return ingredients
 }
+
