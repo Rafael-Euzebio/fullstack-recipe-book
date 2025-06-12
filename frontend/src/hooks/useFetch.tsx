@@ -3,16 +3,21 @@ import axios, { AxiosError } from 'axios'
 import mealsInstance from '../api/axiosInstance'
 import { type ApiResponse } from '../types/meals'
 
-export function useFetchMeals(filter?: string) {
+interface IuseFetchMeals {
+  id?: string | null
+  filter?: string | null
+}
+export function useFetchMeals({ id, filter }: IuseFetchMeals) {
   const [response, setResponse] = useState<ApiResponse | null>(null)
   const [error, setError] = useState<AxiosError | Error | null>(null)
+  const search = filter ? filter : ''
 
   useEffect(() => {
     async function fetchData() {
       setError(null)
 
       try {
-        const response = await mealsInstance.get('')
+        const response = await mealsInstance.get(id ? `/info?id=${id}` : search)
         setResponse(response.data)
       } catch (err: unknown) {
 
