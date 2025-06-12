@@ -5,28 +5,26 @@ import filterIngredients from '../helpers/filterIngredients'
 import type { Meal } from '../types/meals'
 import type { Filter } from '../types/filter'
 import { MealLink } from '../components/MealLink'
+import { List } from './List'
 
 const IngredentsSection = ({ meal, setFilter }: { meal: Meal, setFilter: Dispatch<SetStateAction<Filter>> }) => {
   const ingredients = filterIngredients(meal)
 
   return (
-    <ul className="flex flex-wrap justify-center gap-2">
-      {ingredients.map((ingredient) => (
-        <li
-          key={ingredient}
-          className="bg-amber-100 text-amber-900 px-3 py-1 rounded-full hover:bg-amber-200"
+    <List
+      items={ingredients}
+      listClassName="flex flex-wrap justify-center gap-2"
+      itemClassName="bg-amber-100 text-amber-900 px-3 py-1 rounded-full hover:bg-amber-200"
+      renderItem={(ingredient: string) => (
+        <MealLink
+          href="/"
+          filter={{ type: 'ingredient', value: ingredient }}
+          setFilter={setFilter}
+          className="inline-block rounded-full px-3 py-1 text-sm"
         >
-          <MealLink
-            href="/"
-            filter={{ type: 'ingredient', value: ingredient }}
-            setFilter={setFilter}
-            className="inline-block rounded-full px-3 py-1 text-sm"
-          >
-            {ingredient}
-          </MealLink>
-        </li>
-      ))}
-    </ul>
+          {ingredient}
+        </MealLink>
+      )} />
   )
 }
 
@@ -38,23 +36,20 @@ const CategorySidebar = ({ category, setFilter }: { category: string, setFilter:
   const meals = response && !error ? response.meals : []
 
   return (
-    <ul className="flex flex-col gap-2">
-      {meals.map((meal) => (
-        <li
-          key={meal.idMeal}
-          className="text-amber-700 hover:text-amber-900 transition"
+    <List
+      items={meals}
+      listClassName="flex flex-col gap-2"
+      itemClassName="text-amber-700 hover:text-amber-900 transition"
+      renderItem={(meal: Meal) => (
+        <MealLink
+          href="/"
+          filter={{ type: 'category', value: category }}
+          setFilter={setFilter}
         >
-          <MealLink
-            href="/"
-            filter={{ type: 'category', value: category }}
-            setFilter={setFilter}
-            className=""
-          >
-            {meal.strMeal}
-          </MealLink>
-        </li>
-      ))}
-    </ul>
+          {meal.strMeal}
+        </MealLink>
+      )}
+    />
   )
 }
 
